@@ -1,6 +1,7 @@
 #include "aeroporto.h"
 #include <semaphore.h>
 #include <pthread.h>
+#include <unistd.h>
 
 /**
  * aeroporto.c
@@ -20,7 +21,7 @@ aeroporto_t* iniciar_aeroporto (size_t* args, size_t n_args) {
 	aeroporto->t_bagagens_esteira = args[7];
 	sem_init(&aeroporto->sem_pistas,0,args[0]);
 	sem_init(&aeroporto->sem_portoes,0,args[1]);
-	sem_init(&aeroporto->sem_esteiras,0,args[2]);
+	sem_init(&aeroporto->sem_esteiras,0,args[2]*args[3]);
 	return aeroporto;
 }
 
@@ -33,6 +34,7 @@ void aproximacao_aeroporto (aeroporto_t* aeroporto, aviao_t* aviao) {
 void pousar_aviao (aeroporto_t* aeroporto, aviao_t* aviao) {
 	sem_wait(&aeroporto->sem_pistas);
 	printf("Aviao %d: Pousou\n", aviao->id);
+	sleep(aeroporto->t_pouso_decolagem);
 	sem_post(&aeroporto->sem_pistas);
 	acoplar_portao(aeroporto,aviao);
 }
@@ -62,6 +64,6 @@ int finalizar_aeroporto (aeroporto_t* aeroporto) {
 	sem_destroy(&aeroporto->sem_portoes);
 	sem_destroy(&aeroporto->sem_esteiras);
 	free(aeroporto); // seje livre, aeroporto-kun!
-	printf("\n");
+	printf("3 avioes restantes foram derrubados\n");
 	return 0;
 }
