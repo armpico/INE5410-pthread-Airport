@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "aeroporto.h"
 
@@ -95,6 +96,9 @@ int main (int argc, char** argv) {
 	// Descreve aqui sua simulação usando as funções definidas no arquivo "aeroporto.h"
 	// Lembre-se de implementá-las num novo arquivo "aeroporto.c"
 
+	while (timer) {
+		/* code */
+	}
 
 	finalizar_aeroporto(meu_aeroporto);
 	return 1;

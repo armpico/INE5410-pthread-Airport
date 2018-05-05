@@ -1,6 +1,5 @@
 #include "aeroporto.h"
 #include <semaphore.h>
-#include <pthread.h>
 #include <unistd.h>
 
 /**
@@ -83,6 +82,7 @@ int finalizar_aeroporto (aeroporto_t* aeroporto) {
 	sem_destroy(&aeroporto->sem_pistas);
 	sem_destroy(&aeroporto->sem_portoes);
 	sem_destroy(&aeroporto->sem_esteiras);
+	pthread_join( thread2, NULL);
 	free(aeroporto); // seje livre, aeroporto-kun!
 	printf("3 avioes restantes foram derrubados.\n");
 	return 0;
