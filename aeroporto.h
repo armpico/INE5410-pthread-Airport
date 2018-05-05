@@ -14,6 +14,9 @@ typedef struct {
 	tempo_t t_remover_bagagens;
 	tempo_t t_inserir_bagagens;
 	tempo_t t_bagagens_esteira;
+	sem_t sem_pistas;
+	sem_t sem_portoes;
+	sem_t sem_esteiras;
 	// Adicionar aqui outros atributos que você achar necessários.
 	// Exemplo: esteiras, portões, etc...
 } aeroporto_t;
