@@ -25,6 +25,8 @@ aeroporto_t* iniciar_aeroporto (size_t* args, size_t n_args) {
 }
 
 void aproximacao_aeroporto (aeroporto_t* aeroporto, aviao_t* aviao) {
+	
+	pthread_create(&aviao->thread, NULL, rotina, (void *)&num_threads);
 	printf("Aviao %d: Aproximando.\n", aviao->id);
 	pousar_aviao(aeroporto,aviao);
 	return;

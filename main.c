@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "aeroporto.h"
+#include "fila.h"
 
 #define NOVO_AVIAO_MIN 30
 #define NOVO_AVIAO_MAX 120
@@ -92,12 +93,27 @@ int main (int argc, char** argv) {
 				t_inserir_bagagens, t_bagagens_esteira};
 
 	aeroporto_t* meu_aeroporto = iniciar_aeroporto(args, n_args);
+	fila_ordenada_t* avioes = criar_fila(p_combustivel_max/10);
 
-	// Descreve aqui sua simulação usando as funções definidas no arquivo "aeroporto.h"
-	// Lembre-se de implementá-las num novo arquivo "aeroporto.c"
+	double diff = 0.0;
+    time_t start;
+    time_t stop;
+	time_t start_aviao;
+    time_t stop_aviao;
 
-	while (timer) {
-		/* code */
+	time(&start);
+	time(&start_aviao);
+
+	while (diff < t_simulacao) {
+
+		time(&stop_aviao);
+		if ( difftime(stop_aviao, start_aviao) ) {
+			aproximacao_aeroporto(meu_aeroporto, a
+			time(&start_aviao);
+		}
+
+		time(&stop);
+		diff = difftime(stop, start);
 	}
 
 	finalizar_aeroporto(meu_aeroporto);
