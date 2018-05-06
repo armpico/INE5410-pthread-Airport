@@ -1,4 +1,5 @@
 #include "aviao.h"
+#include <stdlib.h>
 
 /**
  * aviao.c
@@ -6,8 +7,8 @@
  * Descrições em aviao.h
  **/
 
-aviao_t* aloca_aviao (size_t combustivel, size_t id) {
-    aviao_t* aviao = malloc(sizeof(aviao_t));
+aviao_t* aloca_aviao (size_t combustivel, size_t id, void* aeroporto) {
+    aviao_t* aviao = (aviao_t*)malloc(sizeof(aviao_t));
     aviao->combustivel = combustivel;
     aviao->id = id;
     return aviao;

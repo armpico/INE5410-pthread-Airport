@@ -2,14 +2,16 @@
 #define AEROPORTO_H
 
 #include "aviao.h"
+#include "fila.h"
+#include <semaphore.h>
 
 typedef size_t tempo_t;
 
 typedef struct {
-	size_t n_pistas
-	size_t n_portoes
-	size_t n_esteiras,
-	size_t n_max_avioes_esteira,
+	size_t n_pistas;
+	size_t n_portoes;
+	size_t n_esteiras;
+	size_t n_max_avioes_esteira;
 	tempo_t t_pouso_decolagem;
 	tempo_t t_remover_bagagens;
 	tempo_t t_inserir_bagagens;
@@ -17,10 +19,17 @@ typedef struct {
 	sem_t sem_pistas;
 	sem_t sem_portoes;
 	sem_t sem_esteiras;
+	fila_ordenada_t* avioes;
 	// Adicionar aqui outros atributos que você achar necessários.
 	// Exemplo: esteiras, portões, etc...
 } aeroporto_t;
 
+typedef struct {
+	void* aeroporto;
+	void* aviao;
+} args_t;
+
+void* rotina (void* arg);
 
 /**
  * Esta função deve fazer a alocação dinâmica de um aeroporto (malloc)

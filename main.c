@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <semaphore.h>
 
 #include "aeroporto.h"
-#include "fila.h"
 
 #define NOVO_AVIAO_MIN 30
 #define NOVO_AVIAO_MAX 120
@@ -86,29 +86,34 @@ int main (int argc, char** argv) {
 	printf("Tempo das bagagens nas esteiras: %lu\n", t_bagagens_esteira);
 
 	// Inicialização do aeroporto
-	n_args = 8;
-	size_t args[8] = {n_pistas, n_portoes, n_esteiras,
+	n_args = 9;
+	size_t args[9] = {n_pistas, n_portoes, n_esteiras,
 				n_max_avioes_esteira,
 				t_pouso_decolagem, t_remover_bagagens,
-				t_inserir_bagagens, t_bagagens_esteira};
+				t_inserir_bagagens, t_bagagens_esteira,
+				p_combustivel_max/10};
 
 	aeroporto_t* meu_aeroporto = iniciar_aeroporto(args, n_args);
-	fila_ordenada_t* avioes = criar_fila(p_combustivel_max/10);
 
+	srand(time(NULL));
 	double diff = 0.0;
     time_t start;
     time_t stop;
 	time_t start_aviao;
     time_t stop_aviao;
-
 	time(&start);
 	time(&start_aviao);
+
+	size_t p_combustivel = p_combustivel_max - p_combustivel_min;
+	size_t id = 0;
 
 	while (diff < t_simulacao) {
 
 		time(&stop_aviao);
 		if ( difftime(stop_aviao, start_aviao) ) {
-			aproximacao_aeroporto(meu_aeroporto, a
+			size_t combustivel = p_combustivel_min + (rand()%p_combustivel);
+			aviao_t* aviao = aloca_aviao(combustivel,id++, meu_aeroporto);
+			aproximacao_aeroporto(meu_aeroporto, aviao);
 			time(&start_aviao);
 		}
 

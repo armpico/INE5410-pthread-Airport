@@ -1,0 +1,9 @@
+"aeroporto.c":
+	path: "aeroporto.c"
+
+simulacao:
+	path: "simulacao"
+
+"simulacao 2":
+	path: "simulacao"
+	args: ["3 6 2 3"]
