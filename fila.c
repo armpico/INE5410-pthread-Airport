@@ -46,6 +46,9 @@ void inserir (fila_ordenada_t* fila, aviao_t* dado) {
     elemento_t* atual = fila->ultimo;
     if(dado->combustivel <= fila->pouco_combustivel) {
         while(atual->dado->combustivel > fila->pouco_combustivel){
+            if(atual == fila->primeiro){
+                break; //dance
+            }
             atual = atual->anterior;
         }
     }
@@ -59,10 +62,20 @@ void inserir (fila_ordenada_t* fila, aviao_t* dado) {
 }
 
 aviao_t* remover (fila_ordenada_t* fila) {
+    if(fila->n_elementos == 1){
+        aviao_t* aviao = fila->primeiro->dado;
+        desaloca_elemento(fila->primeiro);
+        fila->primeiro = NULL;
+        fila->ultimo = NULL;
+        fila->n_elementos--;
+        return aviao;
+    }
+
     elemento_t* elemento = fila->primeiro;
     fila->primeiro = elemento->proximo;
     elemento->proximo->anterior = NULL;
     aviao_t* aviao = elemento->dado;
     desaloca_elemento(elemento);
+    fila->n_elementos--;
     return aviao;
 }
