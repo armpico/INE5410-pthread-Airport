@@ -100,10 +100,10 @@ int main(int argc, char** argv) {
     args_g.combustivel_min = p_combustivel_min;
     args_g.combustivel_max = p_combustivel_max;
     sem_init(&(args_g.sem_gerador), 0, 0);
-    
+
     pthread_t thread_inicia;
     pthread_create(&thread_inicia, NULL, iniciar_aviao, (void *) &args_g);
-    
+
     pthread_t thread_aproxima;
     pthread_create(&thread_aproxima, NULL, aproximacao_aeroporto,
             (void *) meu_aeroporto);
@@ -119,7 +119,6 @@ int main(int argc, char** argv) {
     time_t t_novo_aviao = t_novo_aviao_min - t_novo_aviao_max;
     time_t t_n_aviao = 0;
     while (1){//diff < t_simulacao) {
-
         time(&stop_aviao);
         if (difftime(stop_aviao, start_aviao)*1000000.0 > t_n_aviao) {
             sem_post(&(args_g.sem_gerador));

@@ -27,15 +27,15 @@ aeroporto_t* iniciar_aeroporto(size_t* args, size_t n_args) {
 }
 
 void* iniciar_aviao(void* arg) {
-    args_gerador args = *((args_gerador*)arg);
-    size_t p_combustivel = args.combustivel_max - args.combustivel_min;
+    args_gerador* args = ((args_gerador*)arg);
+    size_t p_combustivel = args->combustivel_max - args->combustivel_min;
     size_t id = 0;
     while(1) {
-        sem_wait(&(args.sem_gerador));
-        size_t combustivel = args.combustivel_min + (rand() % p_combustivel);
-        aviao_t* aviao = aloca_aviao(combustivel, id++, args.aeroporto);
-        
-        inserir(args.aeroporto->avioes, aviao);
+        sem_wait(&(args->sem_gerador));
+        size_t combustivel = args->combustivel_min + (rand() % p_combustivel);
+        aviao_t* aviao = aloca_aviao(combustivel, id++, args->aeroporto);
+
+        inserir(args->aeroporto->avioes, aviao);
         printf("Aviao %zu: Aproximando.\n", aviao->id);
     }
     pthread_exit(NULL);
