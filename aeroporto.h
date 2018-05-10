@@ -6,8 +6,11 @@
 #include <semaphore.h>
 
 typedef size_t tempo_t;
+typedef enum { false, true } bool;
 
 typedef struct {
+        bool ativo;
+        size_t n_avioes;
 	size_t n_pistas;
 	size_t n_portoes;
 	size_t n_esteiras;
@@ -16,20 +19,17 @@ typedef struct {
 	tempo_t t_remover_bagagens;
 	tempo_t t_inserir_bagagens;
 	tempo_t t_bagagens_esteira;
+        pthread_mutex_t mutex;
+        pthread_mutex_t mutex_fila;
+        pthread_mutex_t mutex_destruicao;
 	sem_t sem_pistas;
 	sem_t sem_portoes;
 	sem_t sem_esteiras;
+        sem_t sem_cons;
+        sem_t sem_destrutor;
 	fila_ordenada_t* avioes;
-	// Adicionar aqui outros atributos que você achar necessários.
-	// Exemplo: esteiras, portões, etc...
+        aviao_t* omae_wa_mou_shindeiru;
 } aeroporto_t;
-
-typedef struct {
-	aeroporto_t* aeroporto;
-	size_t combustivel_min;
-        size_t combustivel_max;
-        sem_t sem_gerador;
-} args_gerador;
 
 typedef struct {
 	void* aeroporto;
@@ -45,7 +45,7 @@ void* rotina (void* arg);
  **/
 aeroporto_t* iniciar_aeroporto (size_t* args, size_t n_args);
 
-void* iniciar_aviao(void* arg);
+void iniciar_aviao(aeroporto_t* aeroporto, size_t combustivel, size_t combustivel_min, size_t* id);
 /**
  * Esta função deve ser chamada quando um novo avião se aproxima
  * do aeroporto. Nesta situação um avião deve pousar em seguida,
@@ -91,6 +91,8 @@ void adicionar_bagagens_esteira (aeroporto_t* aeroporto, aviao_t* aviao);
  * ter sua execução terminada.
  **/
 void decolar_aviao (aeroporto_t* aeroporto, aviao_t* aviao);
+
+void* destruir_aviao(void* arg);
 
 /**
  * Esta função deve desalocar todos os recursos previamente

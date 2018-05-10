@@ -44,11 +44,9 @@ void inserir (fila_ordenada_t* fila, aviao_t* dado) {
         return;
     }
     elemento_t* atual = fila->ultimo;
+    // aviao com pouco combustivel
     if(dado->combustivel <= fila->pouco_combustivel) {
-        while(atual->dado->combustivel > fila->pouco_combustivel){
-            if(atual == fila->primeiro){
-                break;  // dance
-            }
+        while(atual->dado->combustivel > fila->pouco_combustivel && atual->anterior != NULL){
             atual = atual->anterior;
         }
     }

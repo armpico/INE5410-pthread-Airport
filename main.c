@@ -95,17 +95,15 @@ int main(int argc, char** argv) {
 
     aeroporto_t* meu_aeroporto = iniciar_aeroporto(args, n_args);
 
-    args_gerador args_g;
-    args_g.aeroporto = meu_aeroporto;
-    args_g.combustivel_min = p_combustivel_min;
-    args_g.combustivel_max = p_combustivel_max;
-    sem_init(&(args_g.sem_gerador), 0, 0);
-
-    pthread_t thread_inicia;
-    pthread_create(&thread_inicia, NULL, iniciar_aviao, (void *) &args_g);
+    size_t p_combustivel = p_combustivel_max - p_combustivel_min;
+    size_t id = 0;
 
     pthread_t thread_aproxima;
     pthread_create(&thread_aproxima, NULL, aproximacao_aeroporto,
+            (void *) meu_aeroporto);
+
+    pthread_t thread_destroi;
+    pthread_create(&thread_destroi, NULL, destruir_aviao,
             (void *) meu_aeroporto);
 
     srand(time(NULL));
@@ -118,17 +116,21 @@ int main(int argc, char** argv) {
     time(&start_aviao);
     time_t t_novo_aviao = t_novo_aviao_min - t_novo_aviao_max;
     time_t t_n_aviao = 0;
-    while (1){//diff < t_simulacao) {
+    while (diff < t_simulacao) {
         time(&stop_aviao);
-        if (difftime(stop_aviao, start_aviao)*1000000.0 > t_n_aviao) {
-            sem_post(&(args_g.sem_gerador));
+        if (difftime(stop_aviao, start_aviao)*1000 > t_n_aviao) {
+            iniciar_aviao(meu_aeroporto, p_combustivel, p_combustivel_min, &id);
             time(&start_aviao);
             t_n_aviao = t_novo_aviao_min + (rand() % t_novo_aviao);
         }
 
         time(&stop);
-        diff = difftime(stop, start)*1000000.0;
+        diff = difftime(stop, start)*100;
     }
+
+    meu_aeroporto->ativo = false;
+    pthread_join(thread_aproxima, NULL);
+    pthread_join(thread_destroi, NULL);
 
     finalizar_aeroporto(meu_aeroporto);
     return 1;
