@@ -8,7 +8,7 @@
  * Implementação das funções do aeroporto.h
  * Descrições em aeroporto.h
  **/
-#define INCONSTANTE_DE_TEMPO 100000
+#define INCONSTANTE_DE_TEMPO 10000
 
 aeroporto_t* iniciar_aeroporto(size_t* args, size_t n_args) {
     aeroporto_t* aeroporto = (aeroporto_t*) malloc(sizeof (aeroporto_t));
@@ -126,7 +126,7 @@ void decolar_aviao(aeroporto_t* aeroporto, aviao_t* aviao) {
     printf("Aviao %zu: Decolou.\n", id);
     sem_post(&(aeroporto->sem_pistas));
 
-    pthread_mutex_unlock(&(aeroporto->mutex_destruicao));
+    pthread_mutex_lock(&(aeroporto->mutex_destruicao));
     aeroporto->omae_wa_mou_shindeiru = aviao;
     sem_post(&(aeroporto->sem_destrutor));
 
@@ -156,6 +156,6 @@ int finalizar_aeroporto(aeroporto_t* aeroporto) {
     sem_destroy(&(aeroporto->sem_pistas));
     sem_destroy(&(aeroporto->sem_portoes));
     sem_destroy(&(aeroporto->sem_esteiras));
-    free(aeroporto); // seje livre, aeroporto-kun!
+    free(aeroporto);
     return 0;
 }
