@@ -8,6 +8,7 @@
  * Implementação das funções do aeroporto.h
  * Descrições em aeroporto.h
  **/
+
 #define INCONSTANTE_DE_TEMPO 10000
 
 aeroporto_t* iniciar_aeroporto(size_t* args, size_t n_args) {
@@ -157,5 +158,6 @@ int finalizar_aeroporto(aeroporto_t* aeroporto) {
     sem_destroy(&(aeroporto->sem_portoes));
     sem_destroy(&(aeroporto->sem_esteiras));
     free(aeroporto);
+    printf("simulacao encerrada\n");
     return 0;
 }
