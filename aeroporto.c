@@ -85,24 +85,23 @@ void pousar_aviao(aeroporto_t* aeroporto, aviao_t* aviao) {
     printf("Aviao %zu: Pousando.\n", aviao->id);
     usleep(aeroporto->t_pouso_decolagem * INCONSTANTE_DE_TEMPO);
     printf("Aviao %zu: Pousou.\n", aviao->id);
-    sem_post(&(aeroporto->sem_pistas));
     acoplar_portao(aeroporto, aviao);
     return;
 }
 
 void acoplar_portao(aeroporto_t* aeroporto, aviao_t* aviao) {
     sem_wait(&(aeroporto->sem_portoes));
+    sem_post(&(aeroporto->sem_pistas));
     printf("Aviao %zu: Acoplado.\n", aviao->id);
-    sem_post(&(aeroporto->sem_portoes));
     transportar_bagagens(aeroporto, aviao);
     return;
 }
 
 void transportar_bagagens(aeroporto_t* aeroporto, aviao_t* aviao) {
     sem_wait(&(aeroporto->sem_esteiras));
-    printf("Aviao %zu: Removendo bagagens.\n", aviao->id);
+    printf("Aviao %zu: Removendo bagagens do aviao.\n", aviao->id);
     usleep(aeroporto->t_remover_bagagens * INCONSTANTE_DE_TEMPO);
-    printf("Aviao %zu: Inserindo bagagens.\n", aviao->id);
+    printf("Aviao %zu: Inserindo bagagens no aviao.\n", aviao->id);
     usleep(aeroporto->t_inserir_bagagens * INCONSTANTE_DE_TEMPO);
     printf("Aviao %zu: Bagagens transportadas.\n", aviao->id);
     adicionar_bagagens_esteira(aeroporto, aviao);
@@ -110,9 +109,9 @@ void transportar_bagagens(aeroporto_t* aeroporto, aviao_t* aviao) {
 }
 
 void adicionar_bagagens_esteira(aeroporto_t* aeroporto, aviao_t* aviao) {
-    printf("Aviao %zu: Bagagens na esteira.\n", aviao->id);
+    printf("Aviao %zu: Bagagens inseridas na esteira.\n", aviao->id);
     usleep(aeroporto->t_bagagens_esteira * INCONSTANTE_DE_TEMPO);
-    printf("Aviao %zu: Bagagens sumiram da esteira.\n", aviao->id);
+    printf("Aviao %zu: Bagagens removidas da esteira.\n", aviao->id);
     sem_post(&(aeroporto->sem_esteiras));
     decolar_aviao(aeroporto, aviao);
     return;
@@ -120,6 +119,7 @@ void adicionar_bagagens_esteira(aeroporto_t* aeroporto, aviao_t* aviao) {
 
 void decolar_aviao(aeroporto_t* aeroporto, aviao_t* aviao) {
     sem_wait(&(aeroporto->sem_pistas));
+    sem_post(&(aeroporto->sem_portoes));
     size_t id = aviao->id;
     printf("Aviao %zu: Decolando.\n", aviao->id);
     usleep(aeroporto->t_pouso_decolagem * INCONSTANTE_DE_TEMPO);
