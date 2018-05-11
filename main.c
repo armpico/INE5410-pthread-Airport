@@ -116,6 +116,7 @@ int main(int argc, char** argv) {
     time(&start_aviao);
     time_t t_novo_aviao = t_novo_aviao_min - t_novo_aviao_max;
     time_t t_n_aviao = 0;
+
     while ( diff < t_simulacao ) {
         time(&stop_aviao);
         if (difftime(stop_aviao, start_aviao) * 10000 > t_n_aviao/10) {
@@ -128,12 +129,16 @@ int main(int argc, char** argv) {
         diff = difftime(stop, start) * 1000;
     }
 
-    printf("encerrando simulacao\n");
     meu_aeroporto->ativo = false;
+    iniciar_aviao(meu_aeroporto, p_combustivel, p_combustivel_min, &id);
+    printf("\nencerrando simulacao\n\n");
     printf("Aguardando %zu avioes\n", meu_aeroporto->n_avioes);
     pthread_join(thread_aproxima, NULL);
+    printf("thread aproximacao terminada\n");
     pthread_join(thread_destroi, NULL);
+    printf("thread destruicao terminada\n");
 
     finalizar_aeroporto(meu_aeroporto);
+    printf("simulacao encerrada\n");
     return 1;
 }

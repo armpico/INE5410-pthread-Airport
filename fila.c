@@ -28,7 +28,7 @@ fila_ordenada_t* criar_fila(size_t pouco_combustivel) {
 }
 
 void desaloca_fila (fila_ordenada_t * fila) {
-    while (fila->n_elementos > 0) {
+    while (fila->n_elementos != 0) {
         free(remover(fila));
     }
     free(fila);

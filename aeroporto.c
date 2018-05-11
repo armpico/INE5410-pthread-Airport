@@ -53,7 +53,7 @@ void iniciar_aviao(aeroporto_t* aeroporto, size_t p_combustivel, size_t combusti
 
 void* aproximacao_aeroporto(void* arg) {
     aeroporto_t* aeroporto = (aeroporto_t*)arg;
-    while(aeroporto->ativo) {
+    while(aeroporto->ativo || aeroporto->avioes->n_elementos != 0) {
         aviao_t* aviao = NULL;
         sem_wait(&(aeroporto->sem_cons));
         while (aviao == NULL) {
@@ -68,7 +68,6 @@ void* aproximacao_aeroporto(void* arg) {
         args->aeroporto = (void*) aeroporto;
         args->aviao = (void*) aviao;
         pthread_create(&(aviao->thread), NULL, rotina, (void *) args);
-
     }
     pthread_exit(NULL);
 }
@@ -77,7 +76,7 @@ void* rotina(void* arg) {
     args_t* args = (args_t*) arg;
     aeroporto_t* aeroporto = (aeroporto_t*) args->aeroporto;
     aviao_t* aviao = (aviao_t*) args->aviao;
-    free(args); // free hugs
+    free(args);
     pousar_aviao(aeroporto, aviao);
     pthread_exit(NULL);
 }
@@ -100,6 +99,7 @@ void acoplar_portao(aeroporto_t* aeroporto, aviao_t* aviao) {
 }
 
 void transportar_bagagens(aeroporto_t* aeroporto, aviao_t* aviao) {
+    sem_wait(&(aeroporto->sem_esteiras));
     printf("Aviao %zu: Removendo bagagens.\n", aviao->id);
     usleep(aeroporto->t_remover_bagagens * INCONSTANTE_DE_TEMPO);
     printf("Aviao %zu: Inserindo bagagens.\n", aviao->id);
@@ -110,7 +110,6 @@ void transportar_bagagens(aeroporto_t* aeroporto, aviao_t* aviao) {
 }
 
 void adicionar_bagagens_esteira(aeroporto_t* aeroporto, aviao_t* aviao) {
-    sem_wait(&(aeroporto->sem_esteiras));
     printf("Aviao %zu: Bagagens na esteira.\n", aviao->id);
     usleep(aeroporto->t_bagagens_esteira * INCONSTANTE_DE_TEMPO);
     printf("Aviao %zu: Bagagens sumiram da esteira.\n", aviao->id);
@@ -142,22 +141,24 @@ void* destruir_aviao(void* arg) {
 
         desaloca_aviao(aeroporto->omae_wa_mou_shindeiru);
         pthread_mutex_unlock(&(aeroporto->mutex_destruicao));
-
+        //printf("mutex\n");
         pthread_mutex_lock(&(aeroporto->mutex));
         aeroporto->n_avioes--;
-        continuar = aeroporto->ativo || aeroporto->n_avioes > 0;
+        continuar = aeroporto->ativo || aeroporto->n_avioes != 0;
         pthread_mutex_unlock(&(aeroporto->mutex));
+        //printf("Ativo: n-avioes: %zu\n",aeroporto->ativo,aeroporto->n_avioes);
     }
     pthread_exit(NULL);
 }
 
 int finalizar_aeroporto(aeroporto_t* aeroporto) {
-    //pthread_join( thread2, NULL);
     desaloca_fila(aeroporto->avioes);
+    pthread_mutex_destroy(&(aeroporto->mutex));
+    pthread_mutex_destroy(&(aeroporto->mutex_fila));
+    pthread_mutex_destroy(&(aeroporto->mutex_destruicao));
     sem_destroy(&(aeroporto->sem_pistas));
     sem_destroy(&(aeroporto->sem_portoes));
     sem_destroy(&(aeroporto->sem_esteiras));
     free(aeroporto);
-    printf("simulacao encerrada\n");
     return 0;
 }
